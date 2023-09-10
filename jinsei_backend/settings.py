@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "medicine",
     "django_extensions",
     'dataprovider',
+    'updateuser',
 ]
 
 MIDDLEWARE = [

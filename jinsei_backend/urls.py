@@ -27,6 +27,7 @@ from dataprovider.views import (
     bloodpressure,
     oxygenlevel,
 )
+from updateuser.views import updateuser
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -46,4 +47,5 @@ urlpatterns = [
     path("pulse rate", pulserate),
     path("blood pressure", bloodpressure),
     path("oxygen level", oxygenlevel),
+    path("updateuser/", updateuser)
 ]
