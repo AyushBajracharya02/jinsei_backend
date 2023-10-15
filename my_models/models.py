@@ -62,7 +62,7 @@ class AppUser(models.Model):
         blank=True,
     )
     bloodgroup = models.CharField(
-        max_length=3,
+        max_length=4,
         choices=BLOOD_GROUPS,
         null=True,
         blank=True,
@@ -76,7 +76,7 @@ class AppUser(models.Model):
         blank=True,
     )
     sex = models.CharField(null=True, max_length=1, choices=SEX_CHOICES)
-    mealschedule = models.JSONField(null=True, blank=True)
+    mealschedule = models.JSONField(default=dict)
 
     def save(self, *args, **kwargs):
         if self.date_of_birth:

@@ -134,6 +134,7 @@ def bloodpressure(request):
         )
     return JsonResponse({"blood pressurelist": bloodpressurelist})
 
+
 def oxygenlevel(request):
     requestData = request.GET.urlencode()
     requestData = QueryDict(requestData)
@@ -165,3 +166,11 @@ def oxygenlevel(request):
             }
         )
     return JsonResponse({"oxygen levellist": oxygenlevellist})
+
+
+def prescription(req):
+    requestData = req.GET.urlencode()
+    requestData = dict(req.GET)
+    appointmentId = requestData["appointment"][0]
+    prescriptionData = Prescription.objects.get(appointment_id = appointmentId)
+    return JsonResponse(model_to_dict(prescriptionData))

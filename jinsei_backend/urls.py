@@ -18,7 +18,7 @@ from django.urls import path
 from login.views import login
 from signup.views import signup
 from doctors.views import doctors, doctor, doctorTimeScheduleForDay
-from appointments.views import appointments, bookAppointment, upcomingappointments
+from appointments.views import appointments, bookAppointment, upcomingappointments, prescriptionHistory
 from medicine.views import medicinelist, addPrescription, medication
 from dataprovider.views import (
     weight,
@@ -26,6 +26,7 @@ from dataprovider.views import (
     pulserate,
     bloodpressure,
     oxygenlevel,
+    prescription
 )
 from updateuser.views import updateuser
 
@@ -47,5 +48,7 @@ urlpatterns = [
     path("pulse rate", pulserate),
     path("blood pressure", bloodpressure),
     path("oxygen level", oxygenlevel),
-    path("updateuser/", updateuser)
+    path("updateuser/", updateuser),
+    path("prescriptionhistory/",prescriptionHistory),
+    path("prescription", prescription),
 ]

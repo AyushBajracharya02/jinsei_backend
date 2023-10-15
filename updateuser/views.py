@@ -40,6 +40,8 @@ def updateuser(request):
                 if fieldName == "age" or fieldName == "sex":
                     continue
                 if fieldName == "date_of_birth":
+                    if update_data["date_of_birth"] == "null":
+                        continue
                     update_data["date_of_birth"] = datetime.strptime(
                         update_data["date_of_birth"], "%Y-%m-%d"
                     ).date()
@@ -51,6 +53,8 @@ def updateuser(request):
             if fieldName == "age" or fieldName == "sex":
                 continue
             if fieldName == "date_of_birth":
+                if update_data["date_of_birth"] == "null":
+                    continue
                 update_data["date_of_birth"] = datetime.strptime(
                     update_data["date_of_birth"], "%Y-%m-%d"
                 ).date()

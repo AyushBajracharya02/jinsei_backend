@@ -13,7 +13,6 @@ from datetime import datetime
 def appointments(request):
     requestData = request.GET.urlencode()
     requestData = QueryDict(requestData)
-    print(requestData["doctorId"])
     doctor = Doctor.objects.filter(id=requestData["doctorId"]).first()
     appointments = Appointment.objects.filter(
         doctor=doctor, date=requestData["date"]
@@ -27,27 +26,20 @@ def bookAppointment(request):
     if request.method == "POST":
         data = request.body.decode("utf-8")
         data = json.loads(data)
-        try:
-            user = AppUser.objects.get(
-                id=data["userId"], phonenumber=data["userphonenumber"]
-            )
-        except AppUser.DoesNotExist:
-            user = False
-        if not user:
-            user = get_object_or_404(
-                Doctor, id=data["userId"], phonenumber=data["userphonenumber"]
-            )
-            if not user:
-                return JsonResponse({"booking": False})
+        user = False
+        if data['isdoctor']:
+            user = Doctor.objects.get(id = data["userId"])
+        else:
+            user = AppUser.objects.get(id = data["userId"])
         doctor = get_object_or_404(Doctor, id=data["doctorId"])
         if not doctor:
             return JsonResponse({"booking": False})
         time_object = datetime.strptime(data["time"], "%I:%M %p").time()
         appointment = Appointment(date=data["date"], time=time_object, doctor=doctor)
-        if isinstance(user, AppUser):
-            appointment.content_type = ContentType.objects.get_for_model(AppUser)
-        else:
+        if data['isdoctor']:
             appointment.content_type = ContentType.objects.get_for_model(Doctor)
+        else:
+            appointment.content_type = ContentType.objects.get_for_model(AppUser)
         appointment.object_id = data["userId"]
         appointment.save()
         return JsonResponse({"booking": True})
@@ -125,3 +117,31 @@ def upcomingappointments(request):
             "appointmentsasdoctor": appointmentsasdoctor,
         }
     )
+
+
+def prescriptionHistory(req):
+    requestData = req.GET.urlencode()
+    requestData = dict(req.GET)
+    content_type = ContentType.objects.get_for_model(AppUser)
+    if requestData["isdoctor"][0] == "true":
+        content_type = ContentType.objects.get_for_model(Doctor)
+    appointmentWithPrescriptions = Appointment.objects.filter(
+        content_type=content_type,
+        object_id=int(requestData["id"][0]),
+        prescription__isnull=False,
+    )
+    appointmentWithPrescriptionsDict = [model_to_dict(appointment) for appointment in appointmentWithPrescriptions]
+    doctors = []
+    for appointment in appointmentWithPrescriptionsDict:
+        doctors.append(model_to_dict(Doctor.objects.get(id=appointment["doctor"])))
+    appointmentdetails = []
+    for i in range(len(appointmentWithPrescriptionsDict)):
+        appointmentdetails.append(
+            {
+                "appointmentdetails": {
+                    "appointment": appointmentWithPrescriptionsDict[i],
+                    "doctor": doctors[i],
+                }
+            }
+        )
+    return JsonResponse({"appointments": appointmentdetails})
